@@ -29,12 +29,54 @@
 
 
 //---------------New Local Version--------------------
+//plugins {
+//    id 'groovy'
+//    id 'maven-publish'
+//    id 'signing'
+//}
+//
+//
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//
+//    implementation gradleApi()
+//    implementation localGroovy()
+//
+//    implementation 'com.android.tools.build:gradle:4.2.2'
+//
+//    //ASM相关依赖
+//    implementation 'org.ow2.asm:asm:7.1'
+//    implementation 'org.ow2.asm:asm-commons:7.1'
+//}
+//
+//publishing {
+//    publications {
+//        //配置POM
+//        release(MavenPublication) {
+//            groupId = 'com.stew.appplugin'
+//            artifactId = 'lifeplugin'
+//            version = '1.0.0'
+//
+//            from components.java
+//        }
+//    }
+//
+//    repositories {
+//        maven {
+//            url "../apppluginrepo"
+//        }
+//    }
+//}
+
+
+//---------------Remote Version--------------------
+
+// add maven-publish and signing gradle plugin
 plugins {
-    id 'groovy'
+    id 'java-library'
     id 'maven-publish'
+    id 'signing'
 }
-
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -47,37 +89,68 @@ dependencies {
     implementation 'org.ow2.asm:asm:7.1'
     implementation 'org.ow2.asm:asm-commons:7.1'
 }
+group "io.github.stewforani"
+version "1.0.0"
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+// add publish script
 publishing {
     publications {
-        //配置POM
-        maven(MavenPublication) {
-            groupId = 'com.stew.appplugin'
-            artifactId = 'lifeplugin'
-            version = '1.0.0'
-
+        mavenJava(MavenPublication) {
+            artifactId "lifemonitor"
             from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Activity Life Log'
+                description = 'get log from activity execute oncreate'
+                url = 'https://github.com/stewForAni/lifemonitor'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'stewForAni'
+                        name = 'stew'
+                        email = 'stewForAni@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'https://github.com/stewForAni/lifemonitor.git'
+                    developerConnection = 'https://github.com/stewForAni/lifemonitor.git'
+                    url = 'https://github.com/stewForAni/lifemonitor'
+                }
+
+            }
         }
     }
-
     repositories {
-        //发布到本地e盘
         maven {
-            url = "../apppluginrepo"
+            url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username ossrhUsername // ossrhUsername is your sonatype username
+                password ossrhPassword // ossrhUsername is your sonatype password
+            }
         }
-
-        //发布到远程
-//        maven {
-//            name = "remote"
-//            url = "your remote url"
-//            credentials {
-//                username = "your username"
-//                password = "your password"
-//            }
-//        }
-
     }
 }
 
-
-//---------------Remote Version--------------------
+// signing, this need key, secret, we put it into gradle.properties
+signing {
+    sign publishing.publications.mavenJava
+}
