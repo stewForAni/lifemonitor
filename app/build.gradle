@@ -32,35 +32,24 @@
 //plugins {
 //    id 'groovy'
 //    id 'maven-publish'
-//    id 'signing'
 //}
-//
-//
 //dependencies {
 //    implementation fileTree(dir: 'libs', include: ['*.jar'])
-//
 //    implementation gradleApi()
 //    implementation localGroovy()
-//
 //    implementation 'com.android.tools.build:gradle:4.2.2'
-//
-//    //ASM相关依赖
 //    implementation 'org.ow2.asm:asm:7.1'
 //    implementation 'org.ow2.asm:asm-commons:7.1'
 //}
-//
 //publishing {
 //    publications {
-//        //配置POM
 //        release(MavenPublication) {
 //            groupId = 'com.stew.appplugin'
 //            artifactId = 'lifeplugin'
 //            version = '1.0.0'
-//
 //            from components.java
 //        }
 //    }
-//
 //    repositories {
 //        maven {
 //            url "../apppluginrepo"
@@ -71,32 +60,18 @@
 
 //---------------Remote Version--------------------
 
-// add maven-publish and signing gradle plugin
 plugins {
+    id 'groovy'
     id 'java-library'
     id 'maven-publish'
     id 'signing'
 }
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation gradleApi()
-    implementation localGroovy()
-
-    implementation 'com.android.tools.build:gradle:4.2.2'
-
-    //ASM相关依赖
-    implementation 'org.ow2.asm:asm:7.1'
-    implementation 'org.ow2.asm:asm-commons:7.1'
-}
+version "1.0.1"
 group "io.github.stewforani"
-version "1.0.0"
-
 java {
     withJavadocJar()
     withSourcesJar()
 }
-// add publish script
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -141,6 +116,8 @@ publishing {
     }
     repositories {
         maven {
+
+            //url "../myrepo"
             url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             credentials {
                 username ossrhUsername // ossrhUsername is your sonatype username
@@ -150,7 +127,15 @@ publishing {
     }
 }
 
-// signing, this need key, secret, we put it into gradle.properties
 signing {
     sign publishing.publications.mavenJava
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:4.2.2'
+    implementation 'org.ow2.asm:asm:7.1'
+    implementation 'org.ow2.asm:asm-commons:7.1'
 }
