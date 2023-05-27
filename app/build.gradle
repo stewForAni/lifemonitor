@@ -66,7 +66,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
 }
-version "1.0.1"
+version "1.0.3"
 group "io.github.stewforani"
 java {
     withJavadocJar()
@@ -117,7 +117,7 @@ publishing {
     repositories {
         maven {
 
-            //url "../myrepo"
+//            url "../myrepo"
             url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             credentials {
                 username ossrhUsername // ossrhUsername is your sonatype username
