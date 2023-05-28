@@ -37,7 +37,7 @@ public class LifeTransform extends Transform {
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
-        //拿到所有的class文件
+
         Collection<TransformInput> transformInputs = transformInvocation.inputs
         TransformOutputProvider outputProvider = transformInvocation.outputProvider
 
@@ -51,7 +51,6 @@ public class LifeTransform extends Transform {
             //这里对jar的处理，是因为gradle 3.6.0以上R类不会转为.class文件而会转成jar，因此在Transform实现中需要单独拷贝
             it.jarInputs.each {
                 File file = it.file
-                System.out.println("find jar input: " + file.name)
                 def dest = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes, Format.JAR)
                 FileUtils.copyFile(file, dest)
             }
@@ -61,21 +60,12 @@ public class LifeTransform extends Transform {
                 File dir = it.file
                 if (dir.isDirectory()) {
                     dir.eachFileRecurse {
-                        if(it.name.endsWith(".class")){
-                            System.in.println(it.name)
-                            //对class文件进行读取与解析
+                        if(it.name.endsWith("Activity.class")&&!it.name.contains('Base')){
                             ClassReader classReader = new ClassReader(it.bytes)
-                            //对class文件的写入
                             ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-                            //访问class文件相应的内容，解析到某一个结构就会通知到ClassVisitor的相应方法
                             ClassVisitor classVisitor = new ActivityLifeClassVisitor(classWriter)
-                            //依次调用 ClassVisitor接口的各个方法
                             classReader.accept(classVisitor, ClassReader.EXPAND_FRAMES)
-                            //toByteArray方法会将最终修改的字节码以 byte 数组形式返回。
                             byte[] bytes = classWriter.toByteArray()
-
-                            //通过文件流写入方式覆盖掉原先的内容，实现class文件的改写。
-                            //FileOutputStream outputStream = new FileOutputStream( file.parentFile.absolutePath + File.separator + fileName)
                             FileOutputStream outputStream = new FileOutputStream(it.path)
                             outputStream.write(bytes)
                             outputStream.close()

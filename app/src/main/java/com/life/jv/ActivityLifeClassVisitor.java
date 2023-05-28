@@ -26,13 +26,19 @@ public class ActivityLifeClassVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+
         MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
-        if (sName.equals("androidx/appcompat/app/AppCompatActivity")) {
-            if (name.startsWith("onCreate")) {
-                //处理onCreate()方法
-                return new ActivityLifeMethodVisitor(mv, cName, name);
-            }
+
+//        if (sName.equals("androidx/appcompat/app/AppCompatActivity")) {
+//            if (name.startsWith("onCreate")) {
+//                return new ActivityLifeMethodVisitor(mv, cName, name);
+//            }
+//        }
+
+        if (name.startsWith("onCreate")) {
+            return new ActivityLifeMethodVisitor(mv, cName, name);
         }
+
         return mv;
     }
 }

@@ -9,8 +9,7 @@ public class LifePlugin implements Plugin<Project>{
 
     @Override
     void apply(Project project) {
-        System.out.println("--- ActivityLifePlugin start ---")
-
+        System.out.println("***** LifePlugin start *****")
         def extension
         if(project.getPlugins().hasPlugin("com.android.application")){
             extension = project.extensions.getByType(AppExtension)
@@ -19,8 +18,6 @@ public class LifePlugin implements Plugin<Project>{
         }
         LifeTransform transform = new LifeTransform()
         extension.registerTransform(transform)
-
-        System.out.println("--- ActivityLifePlugin register ---")
     }
 
 }

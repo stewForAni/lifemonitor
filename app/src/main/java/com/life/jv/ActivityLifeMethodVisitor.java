@@ -16,6 +16,7 @@ public class ActivityLifeMethodVisitor extends MethodVisitor {
       super(Opcodes.ASM5,mv);
       cName = className;
       mName = name;
+      System.out.println("className = " + className);
    }
 
    @Override
